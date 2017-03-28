@@ -11,9 +11,11 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
 
+import src.Models.Bubble;
+import src.Models.BubbleSystem;
 import src.Models.Fish;
 
-public class View implements GLEventListener
+public class Viewer implements GLEventListener
 {
 	public static int winWidth = 640;
 	public static int winHeight = 640;
@@ -24,7 +26,7 @@ public class View implements GLEventListener
 	
 	
 	//CONSTRUCTOR
-	public View(ArrayList<Displayable> gameObjects)
+	public Viewer(ArrayList<Displayable> gameObjects)
 	{
 		this.gameObjects = gameObjects;
 		
@@ -36,7 +38,7 @@ public class View implements GLEventListener
         canvas.addGLEventListener(this);
         frame.setSize(winWidth, winHeight);
         
-        canvas.addKeyListener(getFish(this.gameObjects));
+        canvas.addKeyListener(getFish());
         
         animator = new FPSAnimator(canvas, 60);
         EventHandler eventHandler = new EventHandler(animator, gameObjects);
@@ -54,13 +56,33 @@ public class View implements GLEventListener
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 		gl.glEnable(GL2.GL_LINE_SMOOTH);
-		 
+
+		gameObjects.stream().forEach((gameObject) -> gameObject.display(drawable));
+
+		gl.glFlush();
 		
-		 gameObjects.stream().forEach((gameObject) -> gameObject.display(drawable));
-		 
+		//DO SOME PHYSICS LOGIC TODO: move this to work on it's own, but then I'd need to make a game loop.
+		checkBubbleCollision();
 		
-		 gl.glFlush();
+	}
+	
+	public void checkBubbleCollision()
+	{
+		BubbleSystem bSys = getBubbleSystem(gameObjects);
+		Fish fish = getFish();
 		
+		for(Bubble b : bSys.getBubbles())
+		{
+			float deltaX = fish.getX() - b.getX();
+			float deltaY = fish.getY() - b.getY();
+			
+			if(Math.abs(deltaX) < fish.getBodyRadius() && Math.abs(deltaY) < fish.getBodyRadius())
+			{
+				Bubble caughtBubble = bSys.getBubble(b);
+				fish.addBubble(caughtBubble);
+			}
+		}
+		bSys.removeDeadBubbles();
 	}
 	@Override
 	public void dispose(GLAutoDrawable arg0)
@@ -86,7 +108,7 @@ public class View implements GLEventListener
 		winHeight = height;
 	}
 	
-	public Fish getFish(ArrayList<Displayable> gameObjects)
+	public Fish getFish()
 	{
 		for(Object o : gameObjects)
 		{
@@ -99,8 +121,21 @@ public class View implements GLEventListener
 		return null;
 	}
 	
+	public BubbleSystem getBubbleSystem(ArrayList<Displayable> gameObjects)
+	{
+		for(Object o : gameObjects)
+		{
+			if (o instanceof BubbleSystem)
+			{
+				return (BubbleSystem) o;
+			}
+		}
+
+		return null;
+	}
+	
 	public String toString()
 	{
-		return "View";
+		return "Viewer";
 	}
 }

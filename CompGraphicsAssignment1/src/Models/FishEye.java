@@ -18,6 +18,10 @@ public class FishEye extends Fish implements Displayable
 	{
 		GL2 gl = drawable.getGL().getGL2();
 		
+		//update:
+		deltaX = bodyRadius / 2;
+		deltaY = bodyRadius / 2.2f;
+		
 		//EYE
 				gl.glBegin(GL2.GL_TRIANGLE_FAN);	
 					gl.glColor3f(1, 1, 1);

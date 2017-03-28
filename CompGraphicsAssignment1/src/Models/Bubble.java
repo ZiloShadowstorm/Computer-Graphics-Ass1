@@ -50,6 +50,11 @@ public class Bubble implements Displayable
 	{
 		return y;
 	}
+	
+	public float getX()
+	{
+		return x;
+	}
 
 	public void setY(float f) 
 	{

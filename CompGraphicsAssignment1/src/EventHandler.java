@@ -44,6 +44,7 @@ public class EventHandler implements WindowListener, MouseListener
 
             public void run() {
                 animator.stop();
+                System.out.println(Viewer.class + " has been closed.");
                 System.exit(0);
             }
         }).start();
@@ -103,11 +104,11 @@ public class EventHandler implements WindowListener, MouseListener
 		if (e.getButton() == 1)
 		{
 			//invert mouseY
-			mouseY = View.winHeight - mouseY;
+			mouseY = Viewer.winHeight - mouseY;
 			
 			//scale for OpenGL
-			double openglX = 2.0 * ((double)mouseX / View.winWidth) - 1.0;
-			double openglY = 2.0 * ((double)mouseY / View.winHeight) - 1.0;
+			double openglX = 2.0 * ((double)mouseX / Viewer.winWidth) - 1.0;
+			double openglY = 2.0 * ((double)mouseY / Viewer.winHeight) - 1.0;
 			Button clickedButton = getButtonClicked(openglX, openglY);
 
 			//if button found
@@ -154,7 +155,7 @@ public class EventHandler implements WindowListener, MouseListener
 		}
 		else if (string == "Plankton")
 		{
-			Darkness.setActivated(false);
+			Plankton.setActivated(false);
 		}
 		else if (string == "Bubbles")
 		{

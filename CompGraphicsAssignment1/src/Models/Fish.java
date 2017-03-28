@@ -2,6 +2,7 @@ package src.Models;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.HashSet;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -21,8 +22,9 @@ public class Fish implements Displayable, KeyListener
 	protected float[] darkOrange = {0.757f, 0.404f, 0f};
 	
 	//RADIUS'SSS....S
-	protected float bodyRadius = 0.2f;
-
+	protected static float initialBodyRadius = 0.2f;
+	protected static float bodyRadius = initialBodyRadius;
+	
 	private float outerMouthRadiusX = 0.035f;
 	private float outerMouthRadiusY = 0.05f;
 	
@@ -36,6 +38,9 @@ public class Fish implements Displayable, KeyListener
 	private int[] spikesMarks = {15, 30, 45, 60, 90, 105, 120, 135, 165, 180, 195, 210, 240, 255, 270, 285};
 	private int[] innerSpikeMarks = {0, 25, 100, 125, 175, 200, 250, 275};
 	
+	//BUBBLES COLLECTED
+	private HashSet<Bubble> collectedBubbles = new HashSet<>();
+	
 	
 	public Fish()
 	{
@@ -46,15 +51,31 @@ public class Fish implements Displayable, KeyListener
 	public void display(GLAutoDrawable drawable)
 	{
 		GL2 gl = drawable.getGL().getGL2();
-		int counter = 0;
 		
+		
+		
+		if(collectedBubbles.size() > 0)
+		{
+			float sizeIncrease = (float)collectedBubbles.size() / 100;
+			bodyRadius =  initialBodyRadius + sizeIncrease;
+		}
+		
+		displayBody(gl);
+		displaySpikes(gl);
+		displayMouth(gl);
+	
+	}
+	
+	private void displayBody(GL2 gl)
+	{
+		int counter = 0;
 		//BODY
 		gl.glBegin(GL2.GL_TRIANGLE_FAN);
 			gl.glColor3f(1f, 0.6f, 0.2f);
 			gl.glVertex2f(x, y);
+			
 			for(int i = 0; i <= 300; i++)
 		 	{
-			
 		 		double theta = (2.0f * Math.PI * i / 300);
 		 		gl.glVertex2d(x + Math.sin(theta) * (bodyRadius), y + Math.cos(theta) * (bodyRadius));
 		 		
@@ -67,12 +88,24 @@ public class Fish implements Displayable, KeyListener
 			 			counter++;
 		 			}
 		 		}
-		 		
-		 		
 		 	}
 		gl.glEnd();
 		
-		//SPIKES
+		//BODY OUTLINE
+		gl.glBegin(GL2.GL_LINE_LOOP);
+			gl.glColor3fv(darkOrange, 0);
+			gl.glLineWidth(3);
+			for(int i = 0; i <= 300; i++)
+		 	{
+				double theta = (2.0f * Math.PI * i / 300);
+		 		gl.glVertex2d(x + Math.sin(theta) * (bodyRadius), y + Math.cos(theta) * (bodyRadius));
+		 	}
+		gl.glEnd();
+	}
+	
+	private void displaySpikes(GL2 gl)
+	{
+		//OUTERSPIKES
 	 	gl.glBegin(GL2.GL_TRIANGLES);
 	 		gl.glColor3fv(darkOrange, 0);
 	 		
@@ -98,26 +131,14 @@ public class Fish implements Displayable, KeyListener
 				gl.glVertex2d(x + Math.sin(theta) * (radius), y + Math.cos(theta) * (radius));
 				gl.glVertex2d(x + Math.sin(middleTheta ) * (radius + 0.06f), y + Math.cos(middleTheta) * (radius + 0.06f));
 				gl.glVertex2d(x + Math.sin(theta2) * (radius), y + Math.cos(theta2) * (radius));
-//				gl.glEnd();
-//				gl.glBegin(GL2.GL_LINE_STRIP);
 			}
 		gl.glEnd();
-		
-	 	//BODY OUTLINE
-		gl.glBegin(GL2.GL_LINE_LOOP);
-			gl.glColor3fv(darkOrange, 0);
-			gl.glLineWidth(3);
-			for(int i = 0; i <= 300; i++)
-		 	{
-			
-		 		double theta = (2.0f * Math.PI * i / 300);
-		 		gl.glVertex2d(x + Math.sin(theta) * (bodyRadius), y + Math.cos(theta) * (bodyRadius));
-		 	}
-		gl.glEnd();
-		
-		
-	 	
-	 	//MOUTH
+
+	}
+	
+	private void displayMouth(GL2 gl)
+	{
+		//MOUTH
 	 	gl.glBegin(GL2.GL_TRIANGLE_FAN);
 	 		gl.glColor3f(0.8f, 0.5f, 0.2f);
 	 		gl.glVertex2f(x + bodyRadius, y);
@@ -136,12 +157,7 @@ public class Fish implements Displayable, KeyListener
 		 		gl.glVertex2d(x + bodyRadius + Math.sin(theta) * (innerMouthRadiusX), y + Math.cos(theta) * (innerMouthRadiusY));
 		 	}
 	 	gl.glEnd();
-	 	
-	 	
-	 	
 
-	 	
-	 	
 	}
 	
 	public float getX()
@@ -228,4 +244,8 @@ public class Fish implements Displayable, KeyListener
 		
 	}
 	
+	public void addBubble(Bubble b)
+	{
+		collectedBubbles.add(b);
+	}
 }

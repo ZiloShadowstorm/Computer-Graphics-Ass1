@@ -63,8 +63,8 @@ public class Main
 		gameObjects.add(timeButton);
 		gameObjects.add(planktonButton);
 		
-		View view = new View(gameObjects);
-		System.out.println(view + " is running.");
+		Viewer viewer = new Viewer(gameObjects);
+		System.out.println(viewer + " is running.");
 
 
 	}
