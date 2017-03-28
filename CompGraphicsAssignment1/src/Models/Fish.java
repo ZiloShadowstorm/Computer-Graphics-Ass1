@@ -15,11 +15,16 @@ public class Fish implements Displayable, KeyListener
 	public static float y = 0;
 	
 	private float speed = 0.05f;
+	private int numToFill = 20;
+	protected static boolean full = false;
+	private int counter = 0;
 	
 	//COLOURS
 	protected float[] fishColor = {1f, 0.6f, 0.2f};
 	protected float[] black = {0, 0, 0};
 	protected float[] darkOrange = {0.757f, 0.404f, 0f};
+	private float[] yellow = {1, 0.933f, 0};
+	private float[] red = {1, 0, 0};
 	
 	//RADIUS'SSS....S
 	protected static float initialBodyRadius = 0.2f;
@@ -60,9 +65,22 @@ public class Fish implements Displayable, KeyListener
 			bodyRadius =  initialBodyRadius + sizeIncrease;
 		}
 		
-		displayBody(gl);
-		displaySpikes(gl);
-		displayMouth(gl);
+		if(collectedBubbles.size() == numToFill)
+		{
+			full = true;
+		}
+		
+		
+		if (!full) 
+		{
+			displayBody(gl);
+			displaySpikes(gl);
+			displayMouth(gl);
+		}
+		else
+		{
+			displayExplosion(gl);
+		}
 	
 	}
 	
@@ -159,6 +177,35 @@ public class Fish implements Displayable, KeyListener
 	 	gl.glEnd();
 
 	}
+	
+	private void displayExplosion(GL2 gl)
+	{
+		//using a counter to pass time
+		
+		gl.glBegin(GL2.GL_LINES);
+			
+			int numLines = 32;
+			for(int i = 0; i <= numLines; i++)
+		 	{
+				gl.glColor3fv(yellow, 0);
+				gl.glVertex2f(x, y);
+				gl.glColor3fv(red, 0);
+		 		double theta = (2.0f * Math.PI * i / numLines);
+		 		gl.glVertex2d(x + Math.sin(theta) * (bodyRadius), y + Math.cos(theta) * (bodyRadius));
+		 	}
+		gl.glEnd();
+		
+		counter++;
+		if(counter > 10)
+		{
+			counter = 0;
+			full = false;
+			collectedBubbles.clear();
+			bodyRadius = initialBodyRadius;
+			
+		}
+	}
+	
 	
 	public float getX()
 	{

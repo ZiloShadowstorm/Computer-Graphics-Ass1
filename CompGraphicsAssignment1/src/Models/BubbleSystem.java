@@ -61,12 +61,21 @@ public class BubbleSystem implements Displayable
 		{
 			bubbles.addAll(deadBubbles);
 			deadBubbles.clear();
+			resetBubbles();
 		}
 	}
 	
 	public static void setActivated(Boolean b)
 	{
 		activated = b;	
+	}
+	
+	private void resetBubbles()
+	{
+		for(Bubble b : bubbles)
+		{
+			b.setY(-1);
+		}
 	}
 	
 	public Bubble getBubble(Bubble b)
@@ -91,5 +100,10 @@ public class BubbleSystem implements Displayable
 	public ArrayList<Bubble> getBubbles()
 	{
 		return bubbles;
+	}
+	
+	public boolean getActivated()
+	{
+		return activated;
 	}
 }

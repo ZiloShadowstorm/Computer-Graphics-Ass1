@@ -71,18 +71,19 @@ public class Viewer implements GLEventListener
 		BubbleSystem bSys = getBubbleSystem(gameObjects);
 		Fish fish = getFish();
 		
-		for(Bubble b : bSys.getBubbles())
+		if (bSys.getActivated()) 
 		{
-			float deltaX = fish.getX() - b.getX();
-			float deltaY = fish.getY() - b.getY();
-			
-			if(Math.abs(deltaX) < fish.getBodyRadius() && Math.abs(deltaY) < fish.getBodyRadius())
-			{
-				Bubble caughtBubble = bSys.getBubble(b);
-				fish.addBubble(caughtBubble);
+			for (Bubble b : bSys.getBubbles()) {
+				float deltaX = fish.getX() - b.getX();
+				float deltaY = fish.getY() - b.getY();
+
+				if (Math.abs(deltaX) < fish.getBodyRadius() && Math.abs(deltaY) < fish.getBodyRadius()) {
+					Bubble caughtBubble = bSys.getBubble(b);
+					fish.addBubble(caughtBubble);
+				}
 			}
+			bSys.removeDeadBubbles();
 		}
-		bSys.removeDeadBubbles();
 	}
 	@Override
 	public void dispose(GLAutoDrawable arg0)
