@@ -15,6 +15,15 @@ import src.Models.Bubble;
 import src.Models.BubbleSystem;
 import src.Models.Fish;
 
+/**
+ * The Viewer handles two things:
+ * The displaying of the game objects, (including the frame needed)
+ * and the collision detection between fish and bubbles.
+ * The constructor does also create the EventHandler which
+ * handles most user inputs.
+ * @author Davy
+ *
+ */
 public class Viewer implements GLEventListener
 {
 	public static int winWidth = 640;
@@ -30,6 +39,7 @@ public class Viewer implements GLEventListener
 	{
 		this.gameObjects = gameObjects;
 		
+		//frame
 		frame = new Frame("Fish Game");
 		GLProfile profile = GLProfile.get(GLProfile.GL2);
         GLCapabilities capabilities = new GLCapabilities(profile);
@@ -38,18 +48,23 @@ public class Viewer implements GLEventListener
         canvas.addGLEventListener(this);
         frame.setSize(winWidth, winHeight);
         
-        canvas.addKeyListener(getFish());
-        
+        //Listeners and Animators
+        canvas.addKeyListener(getFish());       
         animator = new FPSAnimator(canvas, 60);
         EventHandler eventHandler = new EventHandler(animator, gameObjects);
         frame.addWindowListener(eventHandler);
         canvas.addMouseListener(eventHandler);
+       
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
         canvas.requestFocusInWindow();
        
 	}
+	
+	/**
+	 * Streams all the game objects and displays them one by one.
+	 * Then it checks for bubble collision.
+	 */
 	@Override
 	public void display(GLAutoDrawable drawable)
 	{
@@ -66,6 +81,15 @@ public class Viewer implements GLEventListener
 		
 	}
 	
+	/**
+	 * If bubbles has been activated then this method will
+	 * go through each bubble and check if it's in range of 
+	 * the fish. Range, or collision, is considered when the 
+	 * center of the bubble and the center of the fish
+	 * is equal to or less than the body radius of the fish.
+	 * Caught bubbles will be given to the fish. The fish 
+	 * will return the bubbles to the BubbleSystem when it explodes.
+	 */
 	public void checkBubbleCollision()
 	{
 		BubbleSystem bSys = getBubbleSystem(gameObjects);
@@ -73,11 +97,15 @@ public class Viewer implements GLEventListener
 		
 		if (bSys.getActivated()) 
 		{
-			for (Bubble b : bSys.getBubbles()) {
+			for (Bubble b : bSys.getBubbles()) 
+			{
+				//the differences in x and y
 				float deltaX = fish.getX() - b.getX();
 				float deltaY = fish.getY() - b.getY();
 
-				if (Math.abs(deltaX) < fish.getBodyRadius() && Math.abs(deltaY) < fish.getBodyRadius()) {
+				//if the absolute of the differences are less then the fish's body radius
+				if (Math.abs(deltaX) < fish.getBodyRadius() && Math.abs(deltaY) < fish.getBodyRadius()) 
+				{
 					Bubble caughtBubble = bSys.getBubble(b);
 					fish.addBubble(caughtBubble);
 				}
@@ -92,6 +120,9 @@ public class Viewer implements GLEventListener
 		
 	}
 	
+	/**
+	 * Initial setup of OpenGL
+	 */
 	@Override
 	public void init(GLAutoDrawable drawable) 
 	{
@@ -101,6 +132,9 @@ public class Viewer implements GLEventListener
         gl.glShadeModel(GL2.GL_SMOOTH); 
 	}
 	
+	/**
+	 * Handles the reshaping of the window
+	 */
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) 
 	{
@@ -109,6 +143,11 @@ public class Viewer implements GLEventListener
 		winHeight = height;
 	}
 	
+	/**
+	 * Searches the list of game objects for the first
+	 * instance of a fish and returns it.
+	 * @return a fish
+	 */
 	public Fish getFish()
 	{
 		for(Object o : gameObjects)
@@ -122,6 +161,11 @@ public class Viewer implements GLEventListener
 		return null;
 	}
 	
+	/**
+	 * Searches the list of game objects for the first
+	 * instance of a BubbleSystem and returns it.
+	 * @return a BubbleSystem
+	 */
 	public BubbleSystem getBubbleSystem(ArrayList<Displayable> gameObjects)
 	{
 		for(Object o : gameObjects)
@@ -135,6 +179,13 @@ public class Viewer implements GLEventListener
 		return null;
 	}
 	
+	/**
+	 * I used this just to do a print off in Main,
+	 * it was annoying me that Eclipse kept telling me
+	 * I wasn't using Viewer for anything but instantiation.
+	 * This is because the animator triggers all the events for me.
+	 * So I just use this tell me the Viewer has started. =p
+	 */
 	public String toString()
 	{
 		return "Viewer";

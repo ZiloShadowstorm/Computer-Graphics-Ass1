@@ -17,20 +17,24 @@ public class Main
 {
 
 	/**
+	 * Entry point for the program.
+	 * Creates all the game objects.
+	 * Adds them to a list.
+	 * Creates the viewer and pass the list of game objects to it.
 	 * @param args
 	 */
 	public static void main(String[] args)
 	{
 		//COLOURS
-		float[] outerColor = { 0, 0.5f, 1f };
-		float[] innerColor = { 0, 0, 0 };
-		float[] outerColor2 = { 1f, 0.5f, 1f };
+		float[] seaweedOuterColor = { 0, 0.5f, 1f };
+		float[] seaweedInnerColor = { 0, 0, 0 };
+		float[] seaweedOuterColor2 = { 1f, 0.5f, 1f };
 
 		//GAME OBJECTS
 		WaterLine waterline = new WaterLine();
 		OceanBackground oceanBackground = new OceanBackground(waterline);
-		Seaweed seaweed1 = new Seaweed(-0.5f, -1, 0.25f, outerColor, innerColor);
-	    Seaweed seaweed2 = new Seaweed(-0.3f, -1, 0.25f, outerColor2, innerColor);
+		Seaweed seaweed1 = new Seaweed(-0.5f, -1, 0.25f, seaweedOuterColor, seaweedInnerColor);
+	    Seaweed seaweed2 = new Seaweed(-0.3f, -1, 0.25f, seaweedOuterColor2, seaweedInnerColor);
 	    Rockbed rockbed = new Rockbed();
 	    Fish fish = new Fish();
 	    FishFin fishFin = new FishFin();

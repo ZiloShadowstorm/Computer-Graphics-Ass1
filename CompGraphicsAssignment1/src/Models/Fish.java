@@ -46,12 +46,16 @@ public class Fish implements Displayable, KeyListener
 	//BUBBLES COLLECTED
 	private HashSet<Bubble> collectedBubbles = new HashSet<>();
 	
-	
-	public Fish()
-	{
-		
-	}
-
+	/**
+	 * Displays the fish with OpenGl.
+	 * Also has some game logic:
+	 * Determines the size of the fish based of how many bubbles collected.
+	 * Checks if the number of bubbles it can collect has reached max.
+	 * Displays a small explosion if the fish is full of bubbles,
+	 * then returns to normal size.
+	 * EDIT: The actual display code has been moved into other methods
+	 * and this now deals more with the logic.
+	 */
 	@Override
 	public void display(GLAutoDrawable drawable)
 	{
@@ -65,7 +69,7 @@ public class Fish implements Displayable, KeyListener
 			bodyRadius =  initialBodyRadius + sizeIncrease;
 		}
 		
-		if(collectedBubbles.size() == numToFill)
+		if(collectedBubbles.size() >= numToFill)
 		{
 			full = true;
 		}
@@ -84,6 +88,10 @@ public class Fish implements Displayable, KeyListener
 	
 	}
 	
+	/**
+	 * Displays the body of the fish
+	 * @param gl the paintbrush for OpenGl
+	 */
 	private void displayBody(GL2 gl)
 	{
 		int counter = 0;
@@ -121,6 +129,10 @@ public class Fish implements Displayable, KeyListener
 		gl.glEnd();
 	}
 	
+	/**
+	 * Displays the spikes of the fish
+	 * @param gl the paintbrush for OpenGl
+	 */
 	private void displaySpikes(GL2 gl)
 	{
 		//OUTERSPIKES
@@ -154,6 +166,10 @@ public class Fish implements Displayable, KeyListener
 
 	}
 	
+	/**
+	 * Displays the mouth of the fish
+	 * @param gl the paintbrush for OpenGl
+	 */
 	private void displayMouth(GL2 gl)
 	{
 		//MOUTH
@@ -178,10 +194,14 @@ public class Fish implements Displayable, KeyListener
 
 	}
 	
+	/**
+	 * Displays a small explosion. The length of time that
+	 * the explosion is displayed is handled here by a counter.
+	 * Also resets the body radius of the fish to initial size.
+	 * @param gl the paintbrush for OpenGl
+	 */
 	private void displayExplosion(GL2 gl)
 	{
-		//using a counter to pass time
-		
 		gl.glBegin(GL2.GL_LINES);
 			
 			int numLines = 32;
@@ -195,17 +215,29 @@ public class Fish implements Displayable, KeyListener
 		 	}
 		gl.glEnd();
 		
+		bodyRadius = initialBodyRadius;
+		collectedBubbles.clear();
+		
+		//use this to show the explosion for a period of time
 		counter++;
 		if(counter > 10)
 		{
 			counter = 0;
 			full = false;
-			collectedBubbles.clear();
-			bodyRadius = initialBodyRadius;
-			
 		}
 	}
 	
+	/**
+	 * Adds a collected bubble to the list of collected bubbles.
+	 * @param b a bubble
+	 */
+	public void addBubble(Bubble b)
+	{
+		collectedBubbles.add(b);
+	}
+	
+	
+	//GETTERS
 	
 	public float getX()
 	{
@@ -221,6 +253,9 @@ public class Fish implements Displayable, KeyListener
 	{
 		return bodyRadius;
 	}
+	
+	
+	//MOVEMENT
 	
 	public void moveLeft()
 	{
@@ -254,6 +289,9 @@ public class Fish implements Displayable, KeyListener
 		}
 	}
 
+	
+	//KEYLISTENER STUFF
+	
 	@Override
 	public void keyTyped(KeyEvent e)
 	{
@@ -291,8 +329,5 @@ public class Fish implements Displayable, KeyListener
 		
 	}
 	
-	public void addBubble(Bubble b)
-	{
-		collectedBubbles.add(b);
-	}
+	
 }

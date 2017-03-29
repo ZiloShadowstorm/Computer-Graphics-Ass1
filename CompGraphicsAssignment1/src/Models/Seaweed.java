@@ -27,6 +27,7 @@ public class Seaweed implements Displayable
 		this.outerColor = outerColor;
 		this.innerColor = innerColor;
 		
+		//randomize the outer edge
 		for (int i = 0; i <= 300; i++)
 		{
 			displacements[i] = rnd.nextFloat()/30;

@@ -19,10 +19,7 @@ public class BubbleSystem implements Displayable
 	private Random rnd = new Random();
 	private float x = -0.6f;
 	private float y = -1;
-	
 
-	
-	
 	public BubbleSystem()
 	{
 		for (int i = 0; i < numBubbles; i++)
@@ -30,13 +27,21 @@ public class BubbleSystem implements Displayable
 			float xAdjustment = rnd.nextFloat() * 0.3f;
 			float speed = rnd.nextFloat() / 200 + 0.001f;
 			float size = speed * 10;
-			bubbles.add(new Bubble(x + xAdjustment, y, speed, size));
+			bubbles.add(new Bubble(x + xAdjustment, y - xAdjustment, speed, size));
 		}
 	}
 	
 	public void addBubbles(Bubble b)
 	{
 		bubbles.add(b);
+	}
+	
+	public void addNewBubble(ArrayList<Bubble> bubbles)
+	{
+		float xAdjustment = rnd.nextFloat() * 0.3f;
+		float speed = rnd.nextFloat() / 200 + 0.001f;
+		float size = speed * 10;
+		bubbles.add(new Bubble(x + xAdjustment, y - xAdjustment, speed, size));
 	}
 	
 	@Override
@@ -49,13 +54,20 @@ public class BubbleSystem implements Displayable
 			{
 				b.display(drawable);
 				
-				if (b.getY() > 0.7f) 
+				if (b.getTransparency() < 0) 
 				{
 					b.setY(-1);
+					b.setTransparency(1);
+					deadBubbles.add(b);	
 				}
 			} 
 			
+			for (int i = 0; i < deadBubbles.size(); i++) 
+			{
+				addNewBubble(bubbles);
+			}
 			bubbles.removeAll(deadBubbles);
+			deadBubbles.clear();
 		}
 		else //reset
 		{
